@@ -33,7 +33,7 @@ pub mod input {
             modifier = String::from("s");
         }
         sp.stop();
-        println!("{}", (format!("The world {} occurred {} time{} in the text file.",
+        println!("\n{}", (format!("The word {} occurred {} time{} in the text file.",
             word, count, modifier)));
     }
 }
