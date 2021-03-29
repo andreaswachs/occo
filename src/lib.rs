@@ -1,38 +1,40 @@
-use std::fs;
-use std::process;
+extern crate spinners;
 
 pub mod input {
-
-    fn read_file(filename: &str) -> Result<String, &'static str> {
-        match std::fs::read_to_string(filename) {
-            Ok(s) => Ok(s),
-            Err(e) => return Err("Shit!"),
-        }
-    }
+    use std;
+    use std::io::prelude::*;
+    use std::fs::File;
+    use spinners::{Spinner, Spinners};
 
     pub fn find_occurrences(word: &str, filename: &str) {
-        let contents = read_file(filename)
-            .expect("Something went wrong with reading the file");
-        
-        if contents.trim().is_empty() {
-            println!("The file was empty!");
-        }
 
         let mut count: i32 = 0;
         let mut modifier = String::new();
 
-        for line in contents.lines() {
-            if line.contains(&word) {
-                count += 1;
+        let file = File::open(filename)
+        .expect("err");
+        let reader = std::io::BufReader::new(file);
+
+        let sp = Spinner::new(Spinners::SimpleDots, "Looking for occurrences...".into());
+        for line in reader.lines() {
+            match line {
+                Ok(text) => {
+                    if text.contains(&word) {
+                        count += 1;
+                        sp.message(format!("Found {} occurrences so far", count).into());
+                    }
+                    
+                },
+                Err(_) => { /* We are just ignoring errors at the moment.. */ }
             }
         }
-
+        
         if count > 1 {
             modifier = String::from("s");
         }
-
-        println!("The world {} occurred {} time{} in the text file.",
-            word, count, modifier);
+        sp.stop();
+        println!("{}", (format!("The world {} occurred {} time{} in the text file.",
+            word, count, modifier)));
     }
 }
 
