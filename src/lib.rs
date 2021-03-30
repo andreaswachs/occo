@@ -5,13 +5,47 @@ pub mod input {
     use std::io::prelude::*;
     use std::fs::File;
     use spinners::{Spinner, Spinners};
+    use std::process;
+    
+    mod args_helper {
+        pub(in super) fn print_usage() {
+            println!("USAGE: occo WORD FILENAME")
+        }
+    }
 
-    pub fn find_occurrences(word: &str, filename: &str) {
+    pub struct Config {
+        pub word: String,
+        pub filename: String,
+    }
+
+
+    impl Config {
+        pub fn new(args: Vec<String>) -> Self {
+            if args.len() != 3 {
+                println!("Insufficient number of arguments passed to occo.");
+                args_helper::print_usage();
+                process::exit(-1);
+            }
+        
+            let word = args[1].clone();
+            let filename = args[2].clone();
+         
+            if word.trim().is_empty() || filename.trim().is_empty() {
+                println!("Either the search word or the filename was not given");
+                args_helper::print_usage();
+                process::exit(-2);
+            }
+
+            Self { word, filename }
+        }
+
+    }    
+    pub fn find_occurrences(config: &Config) {
 
         let mut count: i32 = 0;
         let mut modifier = String::new();
-
-        let file = File::open(filename)
+        
+        let file = File::open(&config.filename)
         .expect("err");
         let reader = std::io::BufReader::new(file);
 
@@ -19,7 +53,7 @@ pub mod input {
         for line in reader.lines() {
             match line {
                 Ok(text) => {
-                    if text.contains(&word) {
+                    if text.contains(&config.word) {
                         count += 1;
                         sp.message(format!("Found {} occurrences so far", count).into());
                     }
@@ -34,13 +68,8 @@ pub mod input {
         }
         sp.stop();
         println!("\n{}", (format!("The word {} occurred {} time{} in the text file.",
-            word, count, modifier)));
+            config.word, count, modifier)));
     }
+
 }
 
-pub mod service {
-
-    pub fn print_usage() {
-        println!("USAGE: occo WORD FILENAME")
-    }
-}
