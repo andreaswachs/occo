@@ -5,11 +5,30 @@ use std;
 use std::fs::File;
 use std::io::prelude::*;
 use std::process;
-use terminal_size::{terminal_size, Height, Width};
 
 mod args_helper {
     pub(super) fn print_usage() {
         println!("USAGE: occo WORD FILENAME")
+    }
+}
+
+mod helper_functions {
+    use terminal_size::{terminal_size, Height, Width};
+
+    
+    pub(super) fn clear_terminal_line() {
+        let size = terminal_size();
+        if let Some((Width(w), Height(_))) = size {
+            // return the carriage to the beginning of the line
+            print!("\r");
+
+            // Print spaces to clear the line
+            for _ in 0..w - 1 {
+                print!(" ");
+            }
+
+            print!("\r");
+        }
     }
 }
 
@@ -62,8 +81,10 @@ pub fn find_occurrences(config: &Config) {
         modifier = String::from("s");
     }
     sp.stop();
+
+    helper_functions::clear_terminal_line();
     println!(
-        "\n{}",
+        "{}",
         (format!(
             "The word {} occurred {} time{} in the text file.",
             config.word, count, modifier
