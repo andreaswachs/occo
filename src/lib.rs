@@ -38,7 +38,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: Vec<String>) -> Self {
+    pub fn new(args: &Vec<String>) -> Self {
         if args.len() != 3 {
             println!("Insufficient number of arguments passed to occo.");
             args_helper::print_usage();
@@ -90,4 +90,25 @@ pub fn find_occurrences(config: &Config) {
             config.word, count, modifier
         ))
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Config;
+
+    #[test]
+    fn create_new_config_config_should_be_valid() {
+        // Arrange
+        let word:String = String::from("bob");
+        let filename:String = String::from("manuscript.txt");
+        let args = vec!["occo".to_string(), word.clone(), filename.clone()];
+
+        // Act
+        let config = Config::new(&args);
+
+        // Assert
+        assert_eq!(filename, config.filename);
+        assert_eq!(word, config.word);
+
+    }
 }
