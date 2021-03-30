@@ -1,7 +1,7 @@
 [package]
 name = "occo"
 version = "0.1.0"
-authors = ["Andreas Wachs <andertraaks@gmail.com>"]
+authors = ["Andreas Wachs <andreas@wachs.dk>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 spinners = "1.2.0"
 terminal_size = "0.1.16"
+clap = "3.0.0-beta.2"
